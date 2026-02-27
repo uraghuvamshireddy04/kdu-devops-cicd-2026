@@ -4,16 +4,21 @@ phases:
   install:
     runtime-versions:
       java: corretto21
+
   pre_build:
     commands:
-      - echo "Using Java:"
+      - echo "Entering project directory"
+      - cd cicd
+      - echo "Java version:"
       - java -version
       - echo "Running tests..."
-      - mvn -B -DskipTests=false test
+      - ./mvnw -B test
+
   build:
     commands:
-      - echo "Packaging app..."
-      - mvn -B clean package -DskipTests
+      - echo "Packaging jar..."
+      - ./mvnw -B clean package -DskipTests
+
   post_build:
     commands:
       - echo "Preparing Elastic Beanstalk bundle..."
@@ -26,4 +31,4 @@ phases:
 
 artifacts:
   files:
-    - application.zip
+    - cicd/application.zip
