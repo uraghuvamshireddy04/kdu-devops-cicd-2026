@@ -4,6 +4,12 @@ phases:
   install:
     runtime-versions:
       java: corretto21
+    commands:
+      - echo "Ensure maven is available if mvnw is missing"
+      # don't fail if yum can't run in image; ignore errors but try to install maven
+      - if ! command -v mvn >/dev/null 2>&1; then echo "mvn not found, attempting to install maven"; yum install -y maven || true; fi
+      - echo "mvn version (if installed):"
+      - mvn -v || true
 
   pre_build:
     commands:
@@ -11,16 +17,22 @@ phases:
       - cd cicd
       - echo "Java version:"
       - java -version
-      - echo "Fix mvnw permissions"
-      - chmod +x mvnw
-      - echo "Running tests..."
-      - ./mvnw -B test
+      - |
+        if [ -f mvnw ]; then
+          echo "Found mvnw, making executable and using it"
+          chmod +x mvnw
+          MVN_CMD="./mvnw"
+        else
+          echo "mvnw not found — using system mvn"
+          MVN_CMD="mvn"
+        fi
+      - echo "Running tests with $MVN_CMD"
+      - $MVN_CMD -B test
 
   build:
     commands:
-      - echo "Packaging jar..."
-      - chmod +x mvnw
-      - ./mvnw -B clean package -DskipTests
+      - echo "Packaging with $MVN_CMD"
+      - $MVN_CMD -B clean package -DskipTests
 
   post_build:
     commands:
@@ -32,9 +44,10 @@ phases:
         web: java -jar app.jar
         EOF
       - cd bundle
-      - zip -r ../application.zip .
+      - zip -r application.zip .
+      - mv application.zip ..
       - cd ..
 
 artifacts:
   files:
-    - cicd/application.zip
+    - application.zip
