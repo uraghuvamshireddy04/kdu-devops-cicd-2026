@@ -20,5 +20,6 @@ public class VersionController {
   @GetMapping("/version")
   public String version() {
     return buildProperties.getVersion();
+    
   }
 }
