@@ -4,11 +4,22 @@ phases:
   install:
     runtime-versions:
       java: corretto21
+
   build:
     commands:
       - mvn -B clean test package
       - ls -lah target
       - cp target/*.jar app.jar
+
+  post_build:
+    commands:
+      - echo "Writing Procfile to ensure EB passes the correct port"
+      - |
+        cat > Procfile <<'EOF'
+        web: java -Dserver.port=$PORT -jar app.jar
+        EOF
+      - echo "Procfile content:"
+      - cat Procfile
 
 artifacts:
   files:
