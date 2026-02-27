@@ -10,6 +10,7 @@ public class VersionController {
 
     @GetMapping("/")
     public String hello(){
+      
         return "Hello";
     }
     
