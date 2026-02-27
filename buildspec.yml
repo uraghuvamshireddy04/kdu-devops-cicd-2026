@@ -6,21 +6,21 @@ phases:
       java: corretto21
 
   pre_build:
-  commands:
-    - echo "Entering project directory"
-    - cd cicd
-    - echo "Java version:"
-    - java -version
-    - echo "Fix mvnw permissions"
-    - chmod +x mvnw
-    - echo "Running tests..."
-    - ./mvnw -B test
+    commands:
+      - echo "Entering project directory"
+      - cd cicd
+      - echo "Java version:"
+      - java -version
+      - echo "Fix mvnw permissions"
+      - chmod +x mvnw
+      - echo "Running tests..."
+      - ./mvnw -B test
 
-build:
-  commands:
-    - echo "Packaging jar..."
-    - chmod +x mvnw
-    - ./mvnw -B clean package -DskipTests
+  build:
+    commands:
+      - echo "Packaging jar..."
+      - chmod +x mvnw
+      - ./mvnw -B clean package -DskipTests
 
   post_build:
     commands:
