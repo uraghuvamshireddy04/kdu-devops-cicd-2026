@@ -24,7 +24,10 @@ phases:
       - echo "Preparing Elastic Beanstalk bundle..."
       - mkdir -p bundle
       - cp target/*.jar bundle/app.jar
-      - printf "web: java -jar app.jar\n" > bundle/Procfile
+      - |
+        cat > bundle/Procfile <<'EOF'
+        web: java -jar app.jar
+        EOF
       - cd bundle
       - zip -r ../application.zip .
       - cd ..
