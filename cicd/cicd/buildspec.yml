@@ -1,0 +1,29 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto21
+  pre_build:
+    commands:
+      - echo "Using Java:"
+      - java -version
+      - echo "Running tests..."
+      - mvn -B -DskipTests=false test
+  build:
+    commands:
+      - echo "Packaging app..."
+      - mvn -B clean package -DskipTests
+  post_build:
+    commands:
+      - echo "Preparing Elastic Beanstalk bundle..."
+      - mkdir -p bundle
+      - cp target/*.jar bundle/app.jar
+      - printf "web: java -jar app.jar\n" > bundle/Procfile
+      - cd bundle
+      - zip -r ../application.zip .
+      - cd ..
+
+artifacts:
+  files:
+    - application.zip
