@@ -5,7 +5,7 @@ phases:
     runtime-versions:
       java: corretto21
 
-  ppre_build:
+  pre_build:
   commands:
     - echo "Entering project directory"
     - cd cicd
